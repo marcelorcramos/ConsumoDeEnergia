@@ -628,3 +628,41 @@ footer {
         width: 100%;
     }
 }
+
+.bill-calculator {
+    margin-top: 2rem;
+}
+
+.calculator-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.calculator-form .form-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.calculator-result {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.calculator-result span {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+}
+
+@media (max-width: 768px) {
+    .calculator-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .calculator-form .form-group {
+        width: 100%;
+    }
+}

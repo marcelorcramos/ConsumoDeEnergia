@@ -33,7 +33,6 @@
         <section id="dashboard" class="section active">
             <div class="container">
                 <h2>Dashboard de Energia</h2>
-                
                 <div class="dashboard-grid">
                     <div class="card consumption-card">
                         <div class="card-header">
@@ -87,6 +86,29 @@
                         </div>
                         <div class="card-body">
                             <canvas id="distribution-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Adicionando calculadora de consumo pela conta -->
+                <div class="card bill-calculator">
+                    <div class="card-header">
+                        <h3>Calcular Consumo pela Conta</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="calculator-form">
+                            <div class="form-group">
+                                <label for="bill-value">Valor da Conta (R$):</label>
+                                <input type="number" id="bill-value" step="0.01" placeholder="Ex: 250.00">
+                            </div>
+                            <div class="form-group">
+                                <label for="kwh-rate">Tarifa por kWh (R$):</label>
+                                <input type="number" id="kwh-rate" step="0.01" value="0.60" placeholder="Ex: 0.60">
+                            </div>
+                            <button id="calculate-kwh" class="btn btn-primary">Calcular Consumo</button>
+                            <div class="calculator-result">
+                                <p>Consumo Estimado: <span id="result-kwh">0</span> kWh/mês</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -299,6 +321,6 @@
         </div>
     </div>
 
-    <script src="js/script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

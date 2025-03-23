@@ -698,3 +698,116 @@ notificationStyles.textContent = `
 `;
 
 document.head.appendChild(notificationStyles);
+
+// ... existing code ...
+
+// Adicionar funcionalidade para calcular kWh com base no valor em dinheiro
+const calculateBtn = document.getElementById('calculate-kwh');
+const billValueInput = document.getElementById('bill-value');
+const kwhRateInput = document.getElementById('kwh-rate');
+const resultKwh = document.getElementById('result-kwh');
+
+if (calculateBtn) {
+    calculateBtn.addEventListener('click', () => {
+        const billValue = parseFloat(billValueInput.value);
+        const kwhRate = parseFloat(kwhRateInput.value);
+        
+        if (billValue && kwhRate) {
+            const kwhConsumption = billValue / kwhRate;
+            resultKwh.textContent = kwhConsumption.toFixed(2);
+            
+            // Atualizar o gráfico com o novo valor
+            updateConsumptionWithBill(kwhConsumption);
+            
+            showNotification('Consumo calculado com sucesso!');
+        } else {
+            showNotification('Por favor, preencha todos os campos!', 'error');
+        }
+    });
+}
+
+function updateConsumptionWithBill(kwhValue) {
+    // Atualizar o valor de consumo no dashboard
+    const consumptionAmount = document.getElementById('consumption-amount');
+    const consumptionCost = document.getElementById('consumption-cost');
+    
+    if (consumptionAmount && consumptionCost) {
+        consumptionAmount.textContent = kwhValue.toFixed(0);
+        consumptionCost.textContent = billValueInput.value;
+        
+        // Atualizar o gráfico de consumo mensal
+        const currentMonth = new Date().getMonth();
+        consumptionData.month[currentMonth] = kwhValue;
+        updateConsumptionChart('month');
+    }
+}
+
+// Modificar a função de notificação para suportar diferentes tipos
+function showNotification(message, type = 'success') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.innerHTML = `
+        <div class="notification-content ${type}">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    // Add to body
+    document.body.appendChild(notification);
+    
+    // Show notification
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+    
+    // Hide and remove after 3 seconds
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 3000);
+}
+
+// Atualizar os estilos de notificação
+const notificationStyles = document.createElement('style');
+notificationStyles.textContent = `
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        transform: translateX(110%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 1000;
+    }
+    
+    .notification.show {
+        transform: translateX(0);
+    }
+    
+    .notification-content {
+        padding: 1rem 1.5rem;
+        border-radius: 0.25rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: white;
+    }
+    
+    .notification-content.success {
+        background-color: var(--success-color);
+    }
+    
+    .notification-content.error {
+        background-color: var(--danger-color);
+    }
+    
+    .notification i {
+        font-size: 1.25rem;
+    }
+`;
+
+// ... existing code ...
