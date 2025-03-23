@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EnergyTrack - Monitoramento de Energia Residencial</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-bolt"></i>
+                <h1>EnergyTrack</h1>
+            </div>
+            <nav>
+                <ul class="menu">
+                    <li><a href="#dashboard" class="active">Dashboard</a></li>
+                    <li><a href="#devices">Dispositivos</a></li>
+                    <li><a href="#reports">Relatórios</a></li>
+                    <li><a href="#settings">Configurações</a></li>
+                </ul>
+                <button class="menu-toggle" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="dashboard" class="section active">
+            <div class="container">
+                <h2>Dashboard de Energia</h2>
+                
+                <div class="dashboard-grid">
+                    <div class="card consumption-card">
+                        <div class="card-header">
+                            <h3>Consumo Total</h3>
+                            <select id="time-period">
+                                <option value="day">Hoje</option>
+                                <option value="week">Esta Semana</option>
+                                <option value="month" selected>Este Mês</option>
+                                <option value="year">Este Ano</option>
+                            </select>
+                        </div>
+                        <div class="card-body">
+                            <div class="consumption-value">
+                                <span id="consumption-amount">387</span>
+                                <span class="unit">kWh</span>
+                            </div>
+                            <div class="consumption-cost">
+                                <span>Custo estimado: R$ </span>
+                                <span id="consumption-cost">232,20</span>
+                            </div>
+                            <div class="consumption-comparison">
+                                <i class="fas fa-arrow-down text-success"></i>
+                                <span>12% menos que o mês anterior</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h3>Consumo por Dia</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="consumption-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card devices-card">
+                        <div class="card-header">
+                            <h3>Dispositivos Ativos</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul class="devices-list" id="active-devices">
+                                <!-- Devices will be added dynamically -->
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card distribution-card">
+                        <div class="card-header">
+                            <h3>Distribuição de Consumo</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="distribution-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="devices" class="section">
+            <div class="container">
+                <h2>Gerenciar Dispositivos</h2>
+                
+                <div class="devices-controls">
+                    <button id="add-device" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Adicionar Dispositivo
+                    </button>
+                    <div class="search-box">
+                        <input type="text" id="device-search" placeholder="Buscar dispositivos...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+
+                <div class="devices-grid" id="devices-grid">
+                    <!-- Devices will be added dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <section id="reports" class="section">
+            <div class="container">
+                <h2>Relatórios de Consumo</h2>
+                
+                <div class="report-filters">
+                    <div class="filter-group">
+                        <label for="report-period">Período:</label>
+                        <select id="report-period">
+                            <option value="last-month">Último Mês</option>
+                            <option value="last-3-months">Últimos 3 Meses</option>
+                            <option value="last-6-months">Últimos 6 Meses</option>
+                            <option value="last-year">Último Ano</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="report-type">Tipo de Relatório:</label>
+                        <select id="report-type">
+                            <option value="consumption">Consumo Total</option>
+                            <option value="by-device">Por Dispositivo</option>
+                            <option value="by-room">Por Cômodo</option>
+                            <option value="comparison">Comparativo</option>
+                        </select>
+                    </div>
+                    <button id="generate-report" class="btn btn-primary">Gerar Relatório</button>
+                </div>
+
+                <div class="report-content" id="report-content">
+                    <div class="report-chart-container">
+                        <canvas id="report-chart"></canvas>
+                    </div>
+                    <div class="report-summary" id="report-summary">
+                        <!-- Report summary will be added dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="settings" class="section">
+            <div class="container">
+                <h2>Configurações</h2>
+                
+                <div class="settings-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Perfil da Residência</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="profile-form">
+                                <div class="form-group">
+                                    <label for="home-name">Nome da Residência:</label>
+                                    <input type="text" id="home-name" value="Minha Casa">
+                                </div>
+                                <div class="form-group">
+                                    <label for="home-address">Endereço:</label>
+                                    <input type="text" id="home-address" value="Rua Exemplo, 123">
+                                </div>
+                                <div class="form-group">
+                                    <label for="home-size">Tamanho (m²):</label>
+                                    <input type="number" id="home-size" value="120">
+                                </div>
+                                <div class="form-group">
+                                    <label for="residents">Número de Residentes:</label>
+                                    <input type="number" id="residents" value="3">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Tarifas de Energia</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="tariff-form">
+                                <div class="form-group">
+                                    <label for="energy-provider">Fornecedor de Energia:</label>
+                                    <input type="text" id="energy-provider" value="Energia SA">
+                                </div>
+                                <div class="form-group">
+                                    <label for="kwh-price">Preço por kWh (R$):</label>
+                                    <input type="number" id="kwh-price" value="0.60" step="0.01">
+                                </div>
+                                <div class="form-group">
+                                    <label for="peak-hours">Horário de Pico:</label>
+                                    <select id="peak-hours">
+                                        <option value="none">Sem Diferenciação</option>
+                                        <option value="standard" selected>Padrão (18h-21h)</option>
+                                        <option value="custom">Personalizado</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Notificações</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="notifications-form">
+                                <div class="form-group checkbox-group">
+                                    <input type="checkbox" id="notify-high-consumption" checked>
+                                    <label for="notify-high-consumption">Alertar consumo elevado</label>
+                                </div>
+                                <div class="form-group checkbox-group">
+                                    <input type="checkbox" id="notify-bill-estimate" checked>
+                                    <label for="notify-bill-estimate">Estimativa de conta mensal</label>
+                                </div>
+                                <div class="form-group checkbox-group">
+                                    <input type="checkbox" id="notify-device-issues">
+                                    <label for="notify-device-issues">Problemas com dispositivos</label>
+                                </div>
+                                <div class="form-group checkbox-group">
+                                    <input type="checkbox" id="notify-tips" checked>
+                                    <label for="notify-tips">Dicas de economia</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 EnergyTrack - Monitoramento de Energia Residencial</p>
+        </div>
+    </footer>
+
+    <!-- Modal for adding new devices -->
+    <div class="modal" id="device-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Adicionar Novo Dispositivo</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="device-form">
+                    <div class="form-group">
+                        <label for="device-name">Nome do Dispositivo:</label>
+                        <input type="text" id="device-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="device-type">Tipo:</label>
+                        <select id="device-type" required>
+                            <option value="">Selecione um tipo</option>
+                            <option value="lighting">Iluminação</option>
+                            <option value="appliance">Eletrodoméstico</option>
+                            <option value="hvac">Ar Condicionado/Aquecimento</option>
+                            <option value="entertainment">Entretenimento</option>
+                            <option value="other">Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="device-room">Cômodo:</label>
+                        <select id="device-room" required>
+                            <option value="">Selecione um cômodo</option>
+                            <option value="living-room">Sala de Estar</option>
+                            <option value="kitchen">Cozinha</option>
+                            <option value="bedroom">Quarto</option>
+                            <option value="bathroom">Banheiro</option>
+                            <option value="office">Escritório</option>
+                            <option value="other">Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="device-power">Potência (Watts):</label>
+                        <input type="number" id="device-power" required>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="device-smart">
+                        <label for="device-smart">Dispositivo Inteligente</label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary close-modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Adicionar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
