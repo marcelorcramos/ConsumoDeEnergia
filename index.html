@@ -111,6 +111,87 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Add this after the bill-calculator card in the dashboard section -->
+                    <!-- Weather Impact card with enhanced features -->
+                                <!-- Weather Impact card with city input -->
+                                <div class="card weather-impact">
+                                    <div class="card-header">
+                                        <h3>Impacto Climático</h3>
+                                        <select id="weather-period">
+                                            <option value="day">Hoje</option>
+                                            <option value="week" selected>Esta Semana</option>
+                                            <option value="month">Este Mês</option>
+                                        </select>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="city-input-container">
+                                            <div class="form-group">
+                                                <label for="city-input">Cidade:</label>
+                                                <div class="city-search">
+                                                    <input type="text" id="city-input" placeholder="Digite sua cidade...">
+                                                    <button id="search-city" class="btn btn-primary btn-sm">
+                                                        <i class="fas fa-search"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="weather-info">
+                                            <div class="current-weather">
+                                                <i class="fas fa-sun"></i>
+                                                <div class="weather-data">
+                                                    <span class="temperature">28°C</span>
+                                                    <span class="condition">Ensolarado</span>
+                                                </div>
+                                            </div>
+                                            <div class="weather-impact-data">
+                                                <p>Impacto estimado no consumo: <span class="impact-value">+15%</span></p>
+                                                <p>Temperatura média: <span id="avg-temp">26°C</span> (5°C acima da média)</p>
+                                            </div>
+                                        </div>
+                                        <div class="weather-forecast">
+                                            <h4>Previsão para os próximos dias</h4>
+                                            <div class="forecast-items">
+                                                <div class="forecast-day">
+                                                    <span class="day">Seg</span>
+                                                    <i class="fas fa-cloud-sun"></i>
+                                                    <span class="temp">27°C</span>
+                                                </div>
+                                                <div class="forecast-day">
+                                                    <span class="day">Ter</span>
+                                                    <i class="fas fa-cloud"></i>
+                                                    <span class="temp">25°C</span>
+                                                </div>
+                                                <div class="forecast-day">
+                                                    <span class="day">Qua</span>
+                                                    <i class="fas fa-sun"></i>
+                                                    <span class="temp">29°C</span>
+                                                </div>
+                                                <div class="forecast-day">
+                                                    <span class="day">Qui</span>
+                                                    <i class="fas fa-sun"></i>
+                                                    <span class="temp">30°C</span>
+                                                </div>
+                                                <div class="forecast-day">
+                                                    <span class="day">Sex</span>
+                                                    <i class="fas fa-cloud-rain"></i>
+                                                    <span class="temp">24°C</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="weather-chart-container">
+                                            <canvas id="weather-impact-chart"></canvas>
+                                        </div>
+                                        <div class="weather-recommendations">
+                                            <h4>Recomendações</h4>
+                                            <ul>
+                                                <li><i class="fas fa-snowflake"></i> Ajuste o ar condicionado para 24°C para economizar energia</li>
+                                                <li><i class="fas fa-lightbulb"></i> Aproveite a luz natural durante o dia</li>
+                                                <li><i class="fas fa-fan"></i> Use ventiladores em vez de ar condicionado quando possível</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
                 </div>
             </div>
         </section>

@@ -750,3 +750,377 @@ notificationStyles.textContent = `
 `;
 
 document.head.appendChild(notificationStyles);
+
+// Weather Impact Chart and Functionality
+function initializeWeatherImpactChart() {
+    const weatherChartCtx = document.getElementById('weather-impact-chart').getContext('2d');
+    
+    // Sample data - in a real application, this would come from an API
+    const labels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+    const temperatureData = [27, 25, 29, 30, 24, 26, 28];
+    const consumptionData = [12.5, 11.8, 14.2, 15.0, 11.2, 12.0, 13.5];
+    
+    window.weatherImpactChart = new Chart(weatherChartCtx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Temperatura (°C)',
+                    data: temperatureData,
+                    borderColor: '#ff9800',
+                    backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                    yAxisID: 'y-temperature',
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Consumo (kWh)',
+                    data: consumptionData,
+                    borderColor: '#2c7be5',
+                    backgroundColor: 'rgba(44, 123, 229, 0.1)',
+                    yAxisID: 'y-consumption',
+                    tension: 0.4,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                'y-temperature': {
+                    type: 'linear',
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'Temperatura (°C)'
+                    },
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: '#ff9800'
+                    }
+                },
+                'y-consumption': {
+                    type: 'linear',
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'Consumo (kWh)'
+                    },
+                    grid: {
+                        display: true
+                    },
+                    ticks: {
+                        color: '#2c7be5'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += context.parsed.y;
+                                if (context.dataset.yAxisID === 'y-temperature') {
+                                    label += '°C';
+                                } else {
+                                    label += ' kWh';
+                                }
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Update weather impact data based on selected period
+function updateWeatherImpact(period) {
+    // In a real application, this would fetch data from an API
+    // For now, we'll just simulate different data for different periods
+    
+    let labels, temperatureData, consumptionData;
+    
+    switch (period) {
+        case 'day':
+            labels = Array.from({length: 24}, (_, i) => `${i}h`);
+            temperatureData = [
+                22, 21, 20, 19, 19, 20, 
+                21, 23, 25, 27, 28, 29, 
+                30, 30, 29, 28, 27, 26, 
+                25, 24, 23, 22, 22, 21
+            ];
+            consumptionData = [
+                0.4, 0.3, 0.3, 0.3, 0.3, 0.5,
+                0.7, 0.9, 1.1, 1.2, 1.3, 1.4,
+                1.5, 1.5, 1.4, 1.3, 1.2, 1.1,
+                1.0, 0.9, 0.8, 0.6, 0.5, 0.4
+            ];
+            break;
+        case 'week':
+            labels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+            temperatureData = [27, 25, 29, 30, 24, 26, 28];
+            consumptionData = [12.5, 11.8, 14.2, 15.0, 11.2, 12.0, 13.5];
+            break;
+        case 'month':
+            labels = Array.from({length: 30}, (_, i) => `${i+1}`);
+            // Generate random temperature data between 22 and 32
+            temperatureData = Array.from({length: 30}, () => Math.floor(Math.random() * 10) + 22);
+            // Generate consumption data that correlates with temperature
+            consumptionData = temperatureData.map(temp => (temp - 20) * 0.8 + Math.random() * 2);
+            break;
+    }
+    
+    // Update chart data
+    window.weatherImpactChart.data.labels = labels;
+    window.weatherImpactChart.data.datasets[0].data = temperatureData;
+    window.weatherImpactChart.data.datasets[1].data = consumptionData;
+    window.weatherImpactChart.update();
+    
+    // Update weather recommendations based on current temperature
+    updateWeatherRecommendations(temperatureData[temperatureData.length - 1]);
+}
+
+// Update weather recommendations based on temperature
+function updateWeatherRecommendations(temperature) {
+    const recommendationsElement = document.querySelector('.weather-recommendations ul');
+    recommendationsElement.innerHTML = '';
+    
+    // Base recommendations
+    const recommendations = [
+        '<i class="fas fa-lightbulb"></i> Aproveite a luz natural durante o dia'
+    ];
+    
+    // Temperature-specific recommendations
+    if (temperature > 28) {
+        recommendations.push('<i class="fas fa-snowflake"></i> Ajuste o ar condicionado para 24°C para economizar energia');
+        recommendations.push('<i class="fas fa-fan"></i> Use ventiladores em vez de ar condicionado quando possível');
+        recommendations.push('<i class="fas fa-window-close"></i> Mantenha janelas e portas fechadas quando o ar condicionado estiver ligado');
+    } else if (temperature > 24) {
+        recommendations.push('<i class="fas fa-fan"></i> Use ventiladores para circular o ar');
+        recommendations.push('<i class="fas fa-window-maximize"></i> Abra as janelas durante a noite para refrescar a casa');
+    } else if (temperature < 18) {
+        recommendations.push('<i class="fas fa-sun"></i> Aproveite a luz solar para aquecer ambientes durante o dia');
+        recommendations.push('<i class="fas fa-door-closed"></i> Mantenha portas e janelas fechadas para conservar o calor');
+    }
+    
+    // Add recommendations to the DOM
+    recommendations.forEach(rec => {
+        const li = document.createElement('li');
+        li.innerHTML = rec;
+        recommendationsElement.appendChild(li);
+    });
+}
+
+// Event listeners for weather impact functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize weather impact chart
+    initializeWeatherImpactChart();
+    
+    // Add event listener for weather period selector
+    const weatherPeriodSelect = document.getElementById('weather-period');
+    if (weatherPeriodSelect) {
+        weatherPeriodSelect.addEventListener('change', function() {
+            updateWeatherImpact(this.value);
+        });
+        
+        // Initialize with default period (week)
+        updateWeatherImpact('week');
+    }
+});
+
+// Função para obter a localização do usuário e buscar dados climáticos
+function getWeatherData() {
+    // Verificar se o navegador suporta geolocalização
+    if (navigator.geolocation) {
+        // Mostrar mensagem de carregamento
+        document.querySelector('.current-weather').innerHTML = '<p>Obtendo dados climáticos...</p>';
+        
+        // Solicitar a localização do usuário
+        navigator.geolocation.getCurrentPosition(
+            // Sucesso na obtenção da localização
+            position => {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                
+                // Buscar dados climáticos usando a API OpenWeatherMap
+                // Você precisará se registrar para obter uma chave API gratuita em https://openweathermap.org/
+                const apiKey = '12ed3f4c22485987e56ea9c7944360d5';
+                const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`;
+                
+                fetch(weatherApiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        updateWeatherUI(data);
+                        calculateWeatherImpact(data.main.temp);
+                    })
+                    .catch(error => {
+                        console.error('Erro ao buscar dados climáticos:', error);
+                        document.querySelector('.current-weather').innerHTML = 
+                            `<i class="fas fa-exclamation-circle"></i>
+                             <div class="weather-data">
+                                <span class="condition">Erro ao obter dados climáticos</span>
+                             </div>`;
+                    });
+            },
+            // Erro na obtenção da localização
+            error => {
+                console.error('Erro de geolocalização:', error);
+                handleLocationError(error);
+            },
+            // Opções de geolocalização
+            { timeout: 10000 }
+        );
+    } else {
+        // Navegador não suporta geolocalização
+        document.querySelector('.current-weather').innerHTML = 
+            `<i class="fas fa-exclamation-circle"></i>
+             <div class="weather-data">
+                <span class="condition">Geolocalização não suportada pelo navegador</span>
+             </div>`;
+    }
+}
+
+// Função para lidar com erros de geolocalização
+function handleLocationError(error) {
+    let errorMessage = '';
+    
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            errorMessage = 'Permissão de localização negada pelo usuário.';
+            break;
+        case error.POSITION_UNAVAILABLE:
+            errorMessage = 'Informações de localização indisponíveis.';
+            break;
+        case error.TIMEOUT:
+            errorMessage = 'Tempo esgotado ao obter localização.';
+            break;
+        case error.UNKNOWN_ERROR:
+            errorMessage = 'Erro desconhecido ao obter localização.';
+            break;
+    }
+    
+    document.querySelector('.current-weather').innerHTML = 
+        `<i class="fas fa-exclamation-circle"></i>
+         <div class="weather-data">
+            <span class="condition">${errorMessage}</span>
+         </div>`;
+}
+
+// Função para atualizar a interface com os dados climáticos
+function updateWeatherUI(weatherData) {
+    const temperature = Math.round(weatherData.main.temp);
+    const condition = weatherData.weather[0].main;
+    const weatherIcon = getWeatherIcon(weatherData.weather[0].id);
+    
+    // Atualizar a UI com os dados climáticos
+    document.querySelector('.current-weather').innerHTML = 
+        `<i class="${weatherIcon}"></i>
+         <div class="weather-data">
+            <span class="temperature">${temperature}°C</span>
+            <span class="condition">${condition}</span>
+         </div>`;
+    
+    // Atualizar a localização
+    const cityName = weatherData.name;
+    const countryCode = weatherData.sys.country;
+    
+    // Adicionar elemento de localização se não existir
+    if (!document.querySelector('.weather-location')) {
+        const weatherInfo = document.querySelector('.weather-info');
+        const locationElement = document.createElement('div');
+        locationElement.className = 'weather-location';
+        locationElement.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${cityName}, ${countryCode}`;
+        weatherInfo.insertBefore(locationElement, document.querySelector('.weather-impact-data'));
+    } else {
+        document.querySelector('.weather-location').innerHTML = 
+            `<i class="fas fa-map-marker-alt"></i> ${cityName}, ${countryCode}`;
+    }
+}
+
+// Função para obter o ícone correspondente ao código de clima
+function getWeatherIcon(weatherCode) {
+    // Códigos baseados na documentação da OpenWeatherMap
+    // https://openweathermap.org/weather-conditions
+    if (weatherCode >= 200 && weatherCode < 300) {
+        return 'fas fa-bolt'; // Tempestade
+    } else if (weatherCode >= 300 && weatherCode < 400) {
+        return 'fas fa-cloud-rain'; // Chuvisco
+    } else if (weatherCode >= 500 && weatherCode < 600) {
+        return 'fas fa-cloud-showers-heavy'; // Chuva
+    } else if (weatherCode >= 600 && weatherCode < 700) {
+        return 'fas fa-snowflake'; // Neve
+    } else if (weatherCode >= 700 && weatherCode < 800) {
+        return 'fas fa-smog'; // Atmosfera (névoa, poeira, etc)
+    } else if (weatherCode === 800) {
+        return 'fas fa-sun'; // Céu limpo
+    } else if (weatherCode > 800) {
+        return 'fas fa-cloud-sun'; // Nuvens
+    } else {
+        return 'fas fa-question'; // Desconhecido
+    }
+}
+
+// Função para calcular o impacto do clima no consumo de energia
+function calculateWeatherImpact(temperature) {
+    let impact = 0;
+    let impactText = '';
+    
+    // Lógica simplificada para estimar o impacto da temperatura
+    // Temperaturas extremas tendem a aumentar o consumo de energia
+    if (temperature > 28) {
+        // Clima quente - maior uso de ar condicionado
+        impact = Math.round((temperature - 28) * 5); // 5% por grau acima de 28°C
+        impactText = `+${impact}%`;
+    } else if (temperature < 15) {
+        // Clima frio - maior uso de aquecedores
+        impact = Math.round((15 - temperature) * 3); // 3% por grau abaixo de 15°C
+        impactText = `+${impact}%`;
+    } else {
+        // Temperatura confortável - impacto mínimo
+        impact = 0;
+        impactText = "Neutro";
+    }
+    
+    // Atualizar a UI com o impacto estimado
+    document.querySelector('.impact-value').textContent = impactText;
+    
+    // Atualizar recomendações baseadas na temperatura
+    updateWeatherRecommendations(temperature);
+    
+    return impact;
+}
+
+// Adicionar evento para carregar dados climáticos quando a página for carregada
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar o gráfico de impacto climático
+    initializeWeatherImpactChart();
+    
+    // Adicionar botão para solicitar localização
+    const weatherCard = document.querySelector('.weather-impact .card-header');
+    const locationButton = document.createElement('button');
+    locationButton.className = 'btn btn-sm btn-secondary';
+    locationButton.innerHTML = '<i class="fas fa-map-marker-alt"></i> Usar Localização';
+    locationButton.addEventListener('click', getWeatherData);
+    weatherCard.appendChild(locationButton);
+    
+    // Adicionar evento para o seletor de período
+    const weatherPeriodSelect = document.getElementById('weather-period');
+    if (weatherPeriodSelect) {
+        weatherPeriodSelect.addEventListener('change', function() {
+            updateWeatherImpact(this.value);
+        });
+        
+        // Inicializar com período padrão (semana)
+        updateWeatherImpact('week');
+    }
+});
