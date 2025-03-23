@@ -671,7 +671,47 @@ footer {
     margin-top: 2rem;
 }
 
-/* Adicionando estilos para o botão de localização e elemento de localização */
+/* City search input styles */
+.city-search-container {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+.city-input {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;
+    font-size: 0.85rem;
+    height: 30px;
+}
+
+#search-city {
+    border-radius: 0 4px 4px 0;
+    height: 30px;
+    padding: 0 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .weather-impact .card-header {
+        flex-wrap: wrap;
+    }
+    
+    .city-search-container {
+        margin-left: 0;
+        margin-top: 0.5rem;
+        width: 100%;
+    }
+    
+    .city-input {
+        flex-grow: 1;
+    }
+}
+
 .weather-impact .card-header {
     display: flex;
     justify-content: space-between;
