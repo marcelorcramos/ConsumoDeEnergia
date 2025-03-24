@@ -1,4 +1,4 @@
-# README for Energy Consumption Monitoring System
+# README for Energy Consumption Monitoring System 🔋
 
 ## Overview
 
