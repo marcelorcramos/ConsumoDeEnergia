@@ -78,4 +78,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - OpenWeatherMap for providing weather data
 - Chart.js for the visualization library
 - FontAwesome for the icon set
-
